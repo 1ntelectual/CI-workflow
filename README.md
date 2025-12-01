@@ -1,37 +1,41 @@
-# GitHub Actions for CI/CD
-This is the repository for the LinkedIn Learning course `GitHub Actions for CI/CD`. The full course is available from [LinkedIn Learning][lil-course-url].
+# 02_06 Challenge: Develop a CI Workflow
 
-## What You Should Know
-- This is an intermediate level course.  
+## INTRODUCTION
+It’s time for a challenge!
 
-- You will be expected to already have some experience working with a high-level language like Python, JavaScript, or Go.
+You’re working with a team of data scientists that are just starting out with GitHub Actions.
 
-- If you’re not an application developer, it will help if you’re familiar with the software development process.  This includes any experience with building, testing, or deploying software applications.
+The team wants to add a continuous integration workflow to their GitHub repo so that all pushes to the main branch are linted using Flake8 and all tests are run using Pytest.
 
-- You should be comfortable using the Git version control system and GitHub.  
+All code in the repo needs to use a specific version of Pandas, a popular Python library. They have code to test for the version but for some reason the test is failing.
 
-- You will be expected to already have some experience working with GitHub Actions.
+They’d also like to find some way to make it easier to summarize the tests being run in the repo.
 
-- If this is your first time working with GitHub Actions review this course:
-	- [Learning GitHub Actions](https://www.linkedin.com/learning/learning-github-actions-2/)
+## REQUIREMENTS
+Help the team set up a continuous integration pipeline using a GitHub Actions starter workflow.
 
-- Exercise files are available:
-	- [Exercise Files](https://github.com/LinkedInLearning/github-actions-for-ci-cd-4375061)
- 	- Follow the instructions for each chapter for steps to use the files.  For example, you may be asked to create new repositories for demonstrations. 
+1. Start by creating a new repo and adding the exercise files for this challenge.
 
-## Instructions
-This repository has folders for each of the videos in the course.
+    - [requirements.txt](./requirements.txt)
+    - [test_pandas_version.py](./test_pandas_version.py)
 
-### Folders
-The folders are structured to correspond to the videos in the course. The naming convention is `CHAPTER#_MOVIE#`. For example, the folder named `02_03` corresponds to the second chapter and the third video in the second chapter.
+1. Use the GitHub Actions web interface to create a starter workflow.
+1. Run the workflow and observe the problems the team is referring to.
+1. Fix any errors in the code so that the tests pass successfully.
+1. Update the workflow to add a summary of the tests being run. 
+    1. Update the workflow so that it has permissions to create checks in the Actions interface.  
+    1. Update the call to `pytest` so that it creates a JUnit report named `junit.xml`.
+        
+            python -m pytest --verbose --junit-xml=junit.xml
+            
+    1. Add a new step that uses the [JUnit Report Action](https://github.com/marketplace/actions/junit-report-action) from the GitHub Marketplace:
 
-## Installing
-1. To use these exercise files, you must have the following installed:
-	- git
-1. Clone this repository into your local machine using the terminal (Mac), CMD (Windows), or a GUI tool like [SourceTree](https://www.sourcetreeapp.com/).
+            - name: Publish Test Report
+            uses: mikepenz/action-junit-report@v3
+            if: success() || failure() # always run even if the previous step fails
+            with:
+                report_paths: '**/junit.xml'
+                detailed_summary: true
+                include_passed: true
 
-[0]: # (Replace these placeholder URLs with actual course URLs)
-
-[lil-course-url]: https://www.linkedin.com/learning/
-[lil-thumbnail-url]: http://
-:)
+This challenge should take about fifteen minutes to complete.
